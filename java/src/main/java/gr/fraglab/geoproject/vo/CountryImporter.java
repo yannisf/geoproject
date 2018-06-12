@@ -14,10 +14,10 @@ public class CountryImporter {
 
     private static final String COUNTRY_GR_TXT = "/country/GR.txt";
 
-    public static void main(String[] args) {
-        List<LineRecord> lineRecords = importCountry();
-        System.out.println(lineRecords);
-    }
+//    public static void main(String[] args) {
+//        List<LineRecord> lineRecords = importCountry();
+//        System.out.println(lineRecords);
+//    }
 
     public static List<LineRecord> importCountry() {
         try (InputStream inputStream = CountryImporter.class.getResourceAsStream(COUNTRY_GR_TXT);
