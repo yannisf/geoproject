@@ -1,7 +1,6 @@
 package gr.fraglab.geoproject.service;
 
 import gr.fraglab.geoproject.persistence.GeoEntry;
-import gr.fraglab.geoproject.vo.CountryExporter;
 import gr.fraglab.geoproject.vo.LineRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,7 +12,7 @@ import java.io.IOException;
 import java.util.List;
 
 @Service
-public class Importer {
+public class ImporterService {
 
     @PersistenceContext
     private EntityManager em;

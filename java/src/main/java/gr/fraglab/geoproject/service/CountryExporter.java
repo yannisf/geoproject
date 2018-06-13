@@ -1,11 +1,13 @@
-package gr.fraglab.geoproject.vo;
+package gr.fraglab.geoproject.service;
 
+import gr.fraglab.geoproject.vo.LineRecord;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.*;
 import java.util.stream.StreamSupport;
 import java.util.zip.ZipEntry;
@@ -36,7 +38,7 @@ public class CountryExporter {
     }
 
     private List<LineRecord> extractEntries(InputStream inputStream) {
-        try (Scanner scanner = new Scanner(inputStream).useDelimiter("\n|\r\n");) {
+        try (Scanner scanner = new Scanner(inputStream, "UTF-8").useDelimiter("\n|\r\n");) {
             Spliterator<String> spliterator = Spliterators.spliteratorUnknownSize(scanner, Spliterator.ORDERED);
             return StreamSupport.stream(spliterator, false)
                     .map(l -> l.split("\t"))

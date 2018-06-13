@@ -1,12 +1,16 @@
 package gr.fraglab.geoproject.persistence;
 
+import gr.fraglab.geoproject.util.LanguageDetectionTool;
 import gr.fraglab.geoproject.vo.LineRecord;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 
-import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Entity
 public class GeoEntry {
@@ -15,8 +19,8 @@ public class GeoEntry {
     private String geonameid;
     private String name;
     private String asciiName;
-    @Column(length = 2048)
-    private String alternateNames;
+    @ElementCollection
+    private Set<AlternateName> alternateNames;
     private String latitude;
     private String longitude;
     private String featureClass;
@@ -57,11 +61,11 @@ public class GeoEntry {
         this.asciiName = asciiName;
     }
 
-    public String getAlternateNames() {
+    public Set<AlternateName> getAlternateNames() {
         return alternateNames;
     }
 
-    public void setAlternateNames(String alternateNames) {
+    public void setAlternateNames(Set<AlternateName> alternateNames) {
         this.alternateNames = alternateNames;
     }
 
@@ -188,6 +192,18 @@ public class GeoEntry {
     public static GeoEntry from(LineRecord lineRecord) {
         GeoEntry entry = new GeoEntry();
         BeanUtils.copyProperties(lineRecord, entry);
+        if (StringUtils.isNotBlank(lineRecord.getAlternateNames())) {
+            String[] splits = lineRecord.getAlternateNames().split(",");
+            Set<AlternateName> alternateNameSet = Stream.of(splits)
+                    .map(String::trim)
+                    .map(n -> {
+                        AlternateName alternateName = new AlternateName();
+                        alternateName.setName(n);
+                        alternateName.setScript(LanguageDetectionTool.detect(n));
+                        return alternateName;
+                    }).collect(Collectors.toSet());
+            entry.setAlternateNames(alternateNameSet);
+        }
         return entry;
     }
 

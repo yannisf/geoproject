@@ -178,7 +178,7 @@ public class LineRecord {
         this.modificationDate = modificationDate;
     }
 
-    static LineRecord of(String[] values) {
+    public static LineRecord of(String[] values) {
         String[] strings = Stream.of(values)
                 .map(v -> StringUtils.isBlank(v) ? null : v.trim())
                 .toArray(String[]::new);
