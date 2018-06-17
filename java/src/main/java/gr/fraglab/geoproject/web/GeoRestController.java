@@ -1,6 +1,5 @@
 package gr.fraglab.geoproject.web;
 
-import gr.fraglab.geoproject.service.CountryExporter;
 import gr.fraglab.geoproject.service.ImporterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,18 +14,14 @@ public class GeoRestController {
     @Autowired
     private ImporterService importerService;
 
-    @Autowired
-    private CountryExporter exporter;
-
-    @RequestMapping("/import")
-    public String importGeo(@RequestParam(name = "country") String countryCode) throws IOException {
-        Integer numberOfRecords = importerService.importGeo(countryCode);
-        return String.format("%d records imported", numberOfRecords);
+    @RequestMapping("/import/sync")
+    public void importGeoSync(@RequestParam(name = "country") String countryCode) throws IOException {
+        importerService.importGeoSync(countryCode);
     }
 
-    @RequestMapping("/kafka")
-    public void kafka(@RequestParam(name = "country") String countryCode) throws IOException {
-        exporter.sendJsonMessages(countryCode);
+    @RequestMapping("/import/async")
+    public void importGeoAsync(@RequestParam(name = "country") String countryCode) throws IOException {
+        importerService.importGeoAsync(countryCode);
     }
 
 }

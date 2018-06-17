@@ -2,7 +2,7 @@
 # vi: set ft=ruby :
 
 Vagrant.configure("2") do |config|
-  config.vm.box = "debian/stretch64"
+  config.vm.box = "ubuntu/xenial64"
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
@@ -20,6 +20,7 @@ Vagrant.configure("2") do |config|
   config.vm.network "forwarded_port", guest: 7687, host: 7687 # Neo4j
   config.vm.network "forwarded_port", guest: 2181, host: 2181 # Zookeeper
   config.vm.network "forwarded_port", guest: 9092, host: 9092 # Kafka
+  config.vm.network "forwarded_port", guest: 8000, host: 8000 # GeoData web server
 
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine and only allow access
@@ -55,12 +56,14 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", inline: <<-SHELL
     apt-get update
     apt-get -y upgrade
-    apt-get install -y curl screen default-jdk
+    # apt-get install -y curl screen default-jdk
     curl -fsSL get.docker.com | sh
     sudo usermod -aG docker vagrant
-    docker run --name kafka -p 2181:2181 -p 9092:9092 --env ADVERTISED_HOST=localhost --env ADVERTISED_PORT=9092 -d spotify/kafka
-    docker run --name postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 -d postgres
-    docker run --name elastic -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" -d docker.elastic.co/elasticsearch/elasticsearch:6.2.4
-    docker run --name neo4j -p 7474:7474 -p 7687:7687 --volume=$HOME/neo4j/data:/data -d neo4j
+    docker run --name kafka --restart unless-stopped -p 2181:2181 -p 9092:9092 --env ADVERTISED_HOST=localhost --env ADVERTISED_PORT=9092 -d spotify/kafka
+    docker run --name postgres --restart unless-stopped -e POSTGRES_PASSWORD=postgres -p 5432:5432 -d postgres
+    docker run --name nginx --restart unless-stopped -p8000:80 -v /vagrant/geodata:/usr/share/nginx/html -d nginx
+    # docker run --name elastic --restart unless-stopped -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" -d docker.elastic.co/elasticsearch/elasticsearch:6.2.4
+    # docker run --name neo4j --restart unless-stopped -p 7474:7474 -p 7687:7687 --volume=$HOME/neo4j/data:/data -d neo4j
   SHELL
+
 end
