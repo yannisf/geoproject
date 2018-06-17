@@ -22,7 +22,7 @@ public class ImporterService {
 
     @Transactional
     public Integer importGeo(String countryCode) throws IOException {
-        List<LineRecord> lineRecords = countryExporter.export(countryCode);
+        List<LineRecord> lineRecords = countryExporter.getLineRecords(countryCode);
         lineRecords.stream()
                 .map(GeoEntry::from)
                 .forEach(e -> {

@@ -1,18 +1,8 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-# All Vagrant configuration is done below. The "2" in Vagrant.configure
-# configures the configuration version (we support older styles for
-# backwards compatibility). Please don't change it unless you know what
-# you're doing.
 Vagrant.configure("2") do |config|
-  # The most common configuration options are documented and commented below.
-  # For a complete reference, please see the online documentation at
-  # https://docs.vagrantup.com.
-
-  # Every Vagrant development environment requires a box. You can search for
-  # boxes at https://vagrantcloud.com/search.
-  config.vm.box = "debian/jessie64"
+  config.vm.box = "debian/stretch64"
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
@@ -23,11 +13,13 @@ Vagrant.configure("2") do |config|
   # within the machine from a port on the host machine. In the example below,
   # accessing "localhost:8080" will access port 80 on the guest machine.
   # NOTE: This will enable public access to the opened port
-  config.vm.network "forwarded_port", guest: 5432, host: 5432
-  config.vm.network "forwarded_port", guest: 9200, host: 9200
-  config.vm.network "forwarded_port", guest: 9300, host: 9300
-  config.vm.network "forwarded_port", guest: 7474, host: 7474
-  config.vm.network "forwarded_port", guest: 7687, host: 7687
+  config.vm.network "forwarded_port", guest: 5432, host: 5432 # Postgress
+  config.vm.network "forwarded_port", guest: 9200, host: 9200 # Elasticsearch
+  config.vm.network "forwarded_port", guest: 9300, host: 9300 # Elastisearch
+  config.vm.network "forwarded_port", guest: 7474, host: 7474 # Neo4J
+  config.vm.network "forwarded_port", guest: 7687, host: 7687 # Neo4j
+  config.vm.network "forwarded_port", guest: 2181, host: 2181 # Zookeeper
+  config.vm.network "forwarded_port", guest: 9092, host: 9092 # Kafka
 
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine and only allow access
@@ -49,15 +41,7 @@ Vagrant.configure("2") do |config|
   # argument is a set of non-required options.
   # config.vm.synced_folder "../data", "/vagrant_data"
 
-  # Provider-specific configuration so you can fine-tune various
-  # backing providers for Vagrant. These expose provider-specific options.
-  # Example for VirtualBox:
-  #
   config.vm.provider "virtualbox" do |vb|
-  #   # Display the VirtualBox GUI when booting the machine
-  #   vb.gui = true
-  #
-  #   # Customize the amount of memory on the VM:
     vb.memory = "8192"
     vb.cpus = 2
   end
@@ -70,9 +54,11 @@ Vagrant.configure("2") do |config|
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", inline: <<-SHELL
     apt-get update
-    apt-get install -y curl
+    apt-get -y upgrade
+    apt-get install -y curl screen default-jdk
     curl -fsSL get.docker.com | sh
     sudo usermod -aG docker vagrant
+    docker run --name kafka -p 2181:2181 -p 9092:9092 --env ADVERTISED_HOST=localhost --env ADVERTISED_PORT=9092 -d spotify/kafka
     docker run --name postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 -d postgres
     docker run --name elastic -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" -d docker.elastic.co/elasticsearch/elasticsearch:6.2.4
     docker run --name neo4j -p 7474:7474 -p 7687:7687 --volume=$HOME/neo4j/data:/data -d neo4j
