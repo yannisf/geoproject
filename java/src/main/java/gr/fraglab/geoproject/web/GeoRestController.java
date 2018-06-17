@@ -15,12 +15,12 @@ public class GeoRestController {
     private ImporterService importerService;
 
     @RequestMapping("/import/sync")
-    public void importGeoSync(@RequestParam(name = "country") String countryCode) throws IOException {
+    public void importGeoSync(@RequestParam(name = "geodata") String countryCode) throws IOException {
         importerService.importGeoSync(countryCode);
     }
 
     @RequestMapping("/import/async")
-    public void importGeoAsync(@RequestParam(name = "country") String countryCode) throws IOException {
+    public void importGeoAsync(@RequestParam(name = "geodata") String countryCode) throws IOException {
         importerService.importGeoAsync(countryCode);
     }
 

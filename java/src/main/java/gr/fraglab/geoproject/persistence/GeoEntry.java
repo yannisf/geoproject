@@ -2,7 +2,7 @@ package gr.fraglab.geoproject.persistence;
 
 import gr.fraglab.geoproject.util.LanguageDetectionTool;
 import gr.fraglab.geoproject.vo.LineRecord;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 
 import javax.persistence.ElementCollection;
