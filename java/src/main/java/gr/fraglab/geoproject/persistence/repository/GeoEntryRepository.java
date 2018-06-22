@@ -10,13 +10,20 @@ import java.util.List;
 @Repository
 @Transactional
 public interface GeoEntryRepository extends JpaRepository<GeoEntry, String> {
-    List<GeoEntry> getAllAdmin(String geonameId);
 
-    GeoEntry getAdmin3(String geonameId);
 
-    GeoEntry getAdmin2(String geonameId);
+    List<GeoEntry> findByCountryCodeIgnoreCaseAndFeatureClassAndPopulationNot(String countryCode, String featureClass, String population);
 
-    GeoEntry getAdmin1(String geonameId);
+    GeoEntry findByAdmin1CodeAndFeatureCode(String admin1code,
+                                            String featureCode);
 
-    List<GeoEntry> getPopulatedPlaces(String countryCode);
+    GeoEntry findByAdmin1CodeAndAdmin2CodeAndFeatureCode(String admin1code,
+                                                         String admin2code,
+                                                         String featureCode);
+
+    GeoEntry findByAdmin1CodeAndAdmin2CodeAndAdmin3CodeAndFeatureCode(String admin1code,
+                                                                      String admin2code,
+                                                                      String admin3code,
+                                                                      String featureCode);
+
 }

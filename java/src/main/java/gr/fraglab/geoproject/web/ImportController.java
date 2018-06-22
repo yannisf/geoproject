@@ -8,7 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 
-@RestController("/import")
+@RestController()
+@RequestMapping("/import")
 public class ImportController {
 
     @Autowired

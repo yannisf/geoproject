@@ -38,9 +38,6 @@ public class ImporterService {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Autowired
-    private ApplicationContext context;
-
     @Transactional
     public void importGeoSync(String countryCode) throws IOException {
         countryExporter.getLineRecords(countryCode).stream()
@@ -57,15 +54,9 @@ public class ImporterService {
 
 
     @KafkaListener(topics = "${topic.geoentry}")
-    public void listen(ConsumerRecord<String, String> geoEntryConsumerRecord) throws IOException {
-        ImporterService importerService = (ImporterService) context.getBean("importerService");
-        importerService.transformAndPersist(geoEntryConsumerRecord.value());
-    }
-
-    @Async("geo-executor")
     @Transactional
-    public void transformAndPersist(String value) throws IOException {
-        GeoEntry geoEntry = objectMapper.readValue(value, GeoEntry.class);
+    public void listen(ConsumerRecord<String, String> geoEntryConsumerRecord) throws IOException {
+        GeoEntry geoEntry = objectMapper.readValue(geoEntryConsumerRecord.value(), GeoEntry.class);
         LOG.debug("Saving GeoEntry[{}]", geoEntry.getGeonameid());
         geoEntryRepository.save(geoEntry);
     }

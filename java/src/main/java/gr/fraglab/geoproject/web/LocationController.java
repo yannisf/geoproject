@@ -11,7 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@RestController("/populated-places")
+@RestController
+@RequestMapping("/populated-places")
 public class LocationController {
 
     @Autowired

@@ -11,7 +11,6 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 @SpringBootApplication
 @Configuration
-@EnableAsync
 public class GeoProjectApplication {
 
     public static void main(String[] args) {
@@ -21,16 +20,6 @@ public class GeoProjectApplication {
     @Bean()
     public ObjectMapper objectMapper() {
         return new ObjectMapper();
-    }
-
-    @Bean(name = "geo-executor")
-    public TaskExecutor taskExecutor() {
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(10);
-//        Memory danger
-//        executor.setMaxPoolSize(10);
-//        executor.setQueueCapacity(1000);
-        return executor;
     }
 
 }
