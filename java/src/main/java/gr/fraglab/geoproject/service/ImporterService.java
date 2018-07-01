@@ -9,10 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -23,8 +21,11 @@ public class ImporterService {
 
     private static final Logger LOG = LoggerFactory.getLogger(ImporterService.class);
 
-    @Value("${topic.geoentry}")
-    private String topic;
+    @Value("${topic.importGeoEntry}")
+    private String importGeoEntryTopic;
+
+    @Value("${topic.updateGeoentry}")
+    private String updateGeoEntryTopic;
 
     @Autowired
     private CountryExporter countryExporter;
@@ -49,11 +50,11 @@ public class ImporterService {
         countryExporter.getLineRecords(countryCode).stream()
                 .map(GeoEntry::from)
                 .map(this::asJson)
-                .forEach(g -> template.send(topic, g));
+                .forEach(g -> template.send(importGeoEntryTopic, g));
     }
 
 
-    @KafkaListener(topics = "${topic.geoentry}")
+    @KafkaListener(topics = "${topic.importGeoEntry}")
     @Transactional
     public void listen(ConsumerRecord<String, String> geoEntryConsumerRecord) throws IOException {
         GeoEntry geoEntry = objectMapper.readValue(geoEntryConsumerRecord.value(), GeoEntry.class);
