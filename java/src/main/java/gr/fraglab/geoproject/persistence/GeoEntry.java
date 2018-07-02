@@ -37,6 +37,24 @@ public class GeoEntry {
     private String timezone;
     private String modificationDate;
 
+    public static GeoEntry from(LineRecord lineRecord) {
+        GeoEntry entry = new GeoEntry();
+        BeanUtils.copyProperties(lineRecord, entry);
+        if (StringUtils.isNotBlank(lineRecord.getAlternateNames())) {
+            String[] splits = lineRecord.getAlternateNames().split(",");
+            Set<AlternateName> alternateNameSet = Stream.of(splits)
+                    .map(String::trim)
+                    .map(n -> {
+                        AlternateName alternateName = new AlternateName();
+                        alternateName.setName(n);
+                        alternateName.setScript(LanguageDetectionTool.detect(n));
+                        return alternateName;
+                    }).collect(Collectors.toSet());
+            entry.setAlternateNames(alternateNameSet);
+        }
+        return entry;
+    }
+
     public String getGeonameid() {
         return geonameid;
     }
@@ -187,24 +205,6 @@ public class GeoEntry {
 
     public void setModificationDate(String modificationDate) {
         this.modificationDate = modificationDate;
-    }
-
-    public static GeoEntry from(LineRecord lineRecord) {
-        GeoEntry entry = new GeoEntry();
-        BeanUtils.copyProperties(lineRecord, entry);
-        if (StringUtils.isNotBlank(lineRecord.getAlternateNames())) {
-            String[] splits = lineRecord.getAlternateNames().split(",");
-            Set<AlternateName> alternateNameSet = Stream.of(splits)
-                    .map(String::trim)
-                    .map(n -> {
-                        AlternateName alternateName = new AlternateName();
-                        alternateName.setName(n);
-                        alternateName.setScript(LanguageDetectionTool.detect(n));
-                        return alternateName;
-                    }).collect(Collectors.toSet());
-            entry.setAlternateNames(alternateNameSet);
-        }
-        return entry;
     }
 
 }

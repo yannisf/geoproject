@@ -5,30 +5,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
-import java.util.Collection;
-import java.util.List;
 
 @Repository
 @Transactional
 public interface GeoEntryRepository extends JpaRepository<GeoEntry, String> {
-
-    Collection<GeonameidOnly> findByCountryCodeIgnoreCaseAndFeatureClassAndPopulationNot(String countryCode, String featureClass, String population);
-
-
-    GeoEntry findByAdmin1CodeAndFeatureCode(String admin1code,
-                                            String featureCode);
-
-    GeoEntry findByAdmin1CodeAndAdmin2CodeAndFeatureCode(String admin1code,
-                                                         String admin2code,
-                                                         String featureCode);
-
-    GeoEntry findByAdmin1CodeAndAdmin2CodeAndAdmin3CodeAndFeatureCode(String admin1code,
-                                                                      String admin2code,
-                                                                      String admin3code,
-                                                                      String featureCode);
-
-    interface GeonameidOnly {
-        String getGeonameid();
-    }
 
 }

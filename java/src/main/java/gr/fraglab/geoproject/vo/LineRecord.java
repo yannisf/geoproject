@@ -26,6 +26,34 @@ public class LineRecord {
     private String timezone;
     private String modificationDate;
 
+    public static LineRecord of(String[] values) {
+        String[] strings = Stream.of(values)
+                .map(v -> StringUtils.isBlank(v) ? null : v.trim())
+                .toArray(String[]::new);
+
+        LineRecord lineRecord = new LineRecord();
+        lineRecord.geonameid = strings[0];
+        lineRecord.name = strings[1];
+        lineRecord.asciiName = strings[2];
+        lineRecord.alternateNames = strings[3];
+        lineRecord.latitude = strings[4];
+        lineRecord.longitude = strings[5];
+        lineRecord.featureClass = strings[6];
+        lineRecord.featureCode = strings[7];
+        lineRecord.countryCode = strings[8];
+        lineRecord.cc2 = strings[9];
+        lineRecord.admin1Code = strings[10];
+        lineRecord.admin2Code = strings[11];
+        lineRecord.admin3Code = strings[12];
+        lineRecord.admin4Code = strings[13];
+        lineRecord.population = strings[14];
+        lineRecord.elevation = strings[15];
+        lineRecord.dem = strings[16];
+        lineRecord.timezone = strings[17];
+        lineRecord.modificationDate = strings[18];
+        return lineRecord;
+    }
+
     public String getGeonameid() {
         return geonameid;
     }
@@ -176,34 +204,6 @@ public class LineRecord {
 
     public void setModificationDate(String modificationDate) {
         this.modificationDate = modificationDate;
-    }
-
-    public static LineRecord of(String[] values) {
-        String[] strings = Stream.of(values)
-                .map(v -> StringUtils.isBlank(v) ? null : v.trim())
-                .toArray(String[]::new);
-
-        LineRecord lineRecord = new LineRecord();
-        lineRecord.geonameid = strings[0];
-        lineRecord.name = strings[1];
-        lineRecord.asciiName = strings[2];
-        lineRecord.alternateNames = strings[3];
-        lineRecord.latitude = strings[4];
-        lineRecord.longitude = strings[5];
-        lineRecord.featureClass = strings[6];
-        lineRecord.featureCode = strings[7];
-        lineRecord.countryCode = strings[8];
-        lineRecord.cc2 = strings[9];
-        lineRecord.admin1Code = strings[10];
-        lineRecord.admin2Code = strings[11];
-        lineRecord.admin3Code = strings[12];
-        lineRecord.admin4Code = strings[13];
-        lineRecord.population = strings[14];
-        lineRecord.elevation = strings[15];
-        lineRecord.dem = strings[16];
-        lineRecord.timezone = strings[17];
-        lineRecord.modificationDate = strings[18];
-        return lineRecord;
     }
 
 }

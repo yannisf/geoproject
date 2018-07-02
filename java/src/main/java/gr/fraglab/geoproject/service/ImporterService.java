@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gr.fraglab.geoproject.persistence.GeoEntry;
 import gr.fraglab.geoproject.persistence.repository.GeoEntryRepository;
+import gr.fraglab.geoproject.vo.LineRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +25,7 @@ public class ImporterService {
     @Value("${topic.importGeoEntry}")
     private String importGeoEntryTopic;
 
-    @Value("${topic.updateGeoentry}")
+    @Value("${topic.updateGeoEntry}")
     private String updateGeoEntryTopic;
 
     @Autowired
@@ -39,27 +40,20 @@ public class ImporterService {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Transactional
-    public void importGeoSync(String countryCode) throws IOException {
+    public void importGeoNames(String countryCode) throws IOException {
         countryExporter.getLineRecords(countryCode).stream()
-                .map(GeoEntry::from)
-                .forEach(geoEntryRepository::save);
-    }
-
-    public void importGeoAsync(String countryCode) throws IOException {
-        countryExporter.getLineRecords(countryCode).stream()
-                .map(GeoEntry::from)
                 .map(this::asJson)
-                .forEach(g -> template.send(importGeoEntryTopic, g));
+                .forEach(l -> template.send(importGeoEntryTopic, l));
     }
-
 
     @KafkaListener(topics = "${topic.importGeoEntry}")
     @Transactional
     public void listen(ConsumerRecord<String, String> geoEntryConsumerRecord) throws IOException {
-        GeoEntry geoEntry = objectMapper.readValue(geoEntryConsumerRecord.value(), GeoEntry.class);
+        LineRecord lineRecord = objectMapper.readValue(geoEntryConsumerRecord.value(), LineRecord.class);
+        GeoEntry geoEntry = GeoEntry.from(lineRecord);
         LOG.debug("Saving GeoEntry[{}]", geoEntry.getGeonameid());
         geoEntryRepository.save(geoEntry);
+        template.send(updateGeoEntryTopic, geoEntry.getGeonameid());
     }
 
     private String asJson(Object o) {

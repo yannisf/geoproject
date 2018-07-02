@@ -13,6 +13,21 @@ public class Feature {
     private String name;
     private String description;
 
+    public static Feature of(String[] values) {
+        Feature feature = new Feature();
+        String[] splits = values[0].split("\\.");
+        feature.setId(values[0].trim());
+        feature.setCategory(splits[0].trim());
+        if (splits.length > 1) {
+            feature.setCode(splits[1].trim());
+        }
+        feature.setName(values[1].trim());
+        if (values.length > 2) {
+            feature.setDescription(values[2].trim());
+        }
+        return feature;
+    }
+
     public String getId() {
         return id;
     }
@@ -51,21 +66,6 @@ public class Feature {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public static Feature of(String[] values) {
-        Feature feature = new Feature();
-        String[] splits = values[0].split("\\.");
-        feature.setId(values[0].trim());
-        feature.setCategory(splits[0].trim());
-        if (splits.length > 1) {
-            feature.setCode(splits[1].trim());
-        }
-        feature.setName(values[1].trim());
-        if (values.length > 2) {
-            feature.setDescription(values[2].trim());
-        }
-        return feature;
     }
 
 }
